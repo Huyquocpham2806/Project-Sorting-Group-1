@@ -50,7 +50,7 @@ def main():
                     "algorithm": algo, 
                     "data_order": order_name,
                     "data_size": size,
-                    "running_time": duration,
+                    "running_time_ms": duration,
                     "comparisons": comp,
                 })
 
