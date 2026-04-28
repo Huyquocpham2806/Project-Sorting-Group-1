@@ -1,4 +1,7 @@
 import math
+import sys
+
+sys.setrecursionlimit(2000000)
 
 def insertion_sort(a: list[int]) -> tuple[list[int], int]: #book 1
     n = len(a)

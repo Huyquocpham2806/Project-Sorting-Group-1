@@ -9,6 +9,9 @@ from generate_data import *
 from measurement import *
 from result import *
 
+sys.setrecursionlimit(2000000)
+
+
 # Ý nghĩa của các biến
 
 # algo: thuật toán được sử dụng
