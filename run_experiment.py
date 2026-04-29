@@ -13,12 +13,13 @@ CSV_FIELDS = ["algorithm", "data_order", "data_size",
  
 DATA_SIZES = [10_000, 30_000, 50_000, 100_000, 300_000, 500_000]
 
-DATA_ORDERS = [
-    ("-sorted",  "Sorted"),
-    ("-nsorted", "Nearly Sorted"),
-    ("-rev",     "Reversed"),
-    ("-rand",    "Randomized"),
-]
+ALL_ORDERS = {
+    "-sorted":  "Sorted",
+    "-nsorted": "Nearly Sorted",
+    "-rev":     "Reversed",
+    "-rand":    "Randomized",
+}
+
  
 ALGORITHMS = [
     "selection-sort",
@@ -35,10 +36,10 @@ ALGORITHMS = [
     "flash-sort",
 ]
 
-def main():
+def run_orders(order_to_run):
     rows = []
 
-    for params, order_name in DATA_ORDERS:
+    for params, order_name in order_to_run:
         for size in DATA_SIZES:
             data = generate_data(size, params)
 
@@ -54,14 +55,32 @@ def main():
                     "comparisons": comp,
                 })
 
-    with open("results.csv", "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=[
-                "algorithm", "data_order", "data_size",
-                "running_time_ms", "comparisons"
-            ])
-            writer.writeheader()
+    file_exists = os.path.exists(OUTPUT_CSV)
+
+    with open(OUTPUT_CSV, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=CSV_FIELDS)
+            if not file_exists:
+                writer.writeheader()
             writer.writerows(rows)
+
+def main():
     
+    if len(sys.argv) == 1:
+        order_to_run = list(ALL_ORDERS.items())
+    
+    elif len(sys.argv) == 2:
+        params = sys.argv[1]
+        if params not in ALL_ORDERS:
+            print(f"Lỗi: order không hợp lệ '{params}'")
+            print(f"Các giá trị hợp lệ: {list(ALL_ORDERS.keys())}")
+            return
+        order_to_run = [(params, ALL_ORDERS[params])]
+    
+    else:
+        print("Lỗi: chỉ nhận tối đa 1 tham số")
+        return
+ 
+    run_orders(order_to_run)    
  
 if __name__ == "__main__":
     main()

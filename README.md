@@ -14,7 +14,7 @@ Shell Sort, Heap Sort, Merge Sort, Quick Sort, Counting Sort, Radix Sort, Flash 
 ├── measurement.py          # đo running time và đếm comparisons
 ├── file_IO.py              # đọc/ghi input.txt, output.txt
 ├── result.py               # in kết quả ra console
-├── run_experiments.py      # chạy benchmark đầy đủ -> results.csv
+├── run_experiment.py       # chạy benchmark -> results.csv
 └── visualize.py            # đọc results.csv -> 8 biểu đồ trong charts/
 ```
 
@@ -63,34 +63,58 @@ Chi tiết các tham số:
 | Input order | `-sorted`, `-nsorted`, `-rev`, `-rand` |
 | Output param | `-time`, `-comp`, `-both` |
 
-### 2. Chạy benchmark đầy đủ + vẽ biểu đồ (cho phần Report)
+### 2. Chạy benchmark + vẽ biểu đồ (cho phần Report)
 
-**Bước 1**: Chạy benchmark - sẽ sinh ra file `results.csv`
+#### Bước 1: Chạy benchmark
+
+`run_experiment.py` hỗ trợ 2 cách chạy:
+
+**Cách A - Chạy hết 4 data orders cùng lúc:**
 
 ```bash
-python run_experiments.py
+python run_experiment.py
 ```
 
-⚠️ **Cảnh báo**: Lệnh này benchmark 12 thuật toán × 4 data orders × 6 data sizes
-(10k, 30k, 50k, 100k, 300k, 500k). Vì các thuật toán O(n²) chạy rất chậm
-trên Python với n=500k, **tổng thời gian có thể lên đến nhiều giờ đến hơn 1 ngày**.
+⚠️ Cảnh báo: cách này có thể mất hơn 1 ngày để chạy xong (đặc biệt với
+quick-sort trên data Sorted/Reversed sẽ rơi vào worst case O(n²)).
 
-Khuyến nghị:
+**Cách B - Chạy từng data order riêng (khuyến nghị):**
+
+```bash
+python run_experiment.py -sorted    # chỉ chạy data đã sorted
+python run_experiment.py -nsorted   # chỉ chạy data nearly sorted
+python run_experiment.py -rev       # chỉ chạy data reversed
+python run_experiment.py -rand      # chỉ chạy data randomized
+```
+
+Mỗi lần chạy sẽ **ghi nối** kết quả vào `results.csv` (không ghi đè).
+Nhờ đó có thể chạy nhiều lần cách quãng, gom đủ 4 orders.
+
+Thời gian tham khảo cho từng order:
+- `-rand`, `-nsorted`: ~10-20 giờ mỗi cái
+- `-sorted`, `-rev`: ~25-50 giờ mỗi cái (do quick-sort worst case)
+
+⚠️ Nếu muốn chạy lại từ đầu, **xóa file `results.csv` trước khi chạy**
+để tránh dữ liệu bị trùng lặp.
+
+Khuyến nghị khi chạy:
 - Cắm sạc, tắt sleep
-- Chạy qua đêm hoặc cuối tuần
-- Đừng tắt máy giữa chừng (sẽ mất kết quả)
+- Đóng các app nặng (Chrome, IDE)
+- Chạy qua đêm hoặc lúc không dùng máy
 
-**Bước 2**: Vẽ biểu đồ - sẽ sinh ra thư mục `charts/` chứa 8 file PNG
+#### Bước 2: Vẽ biểu đồ
 
 ```bash
 python visualize.py
 ```
 
-Output:
+Sẽ sinh ra thư mục `charts/` chứa 8 file PNG:
 - 4 line graphs (running time vs data size) - mỗi data order 1 hình
 - 4 bar charts (comparisons vs data size) - mỗi data order 1 hình
 
-Lệnh này chạy rất nhanh (vài giây) vì chỉ đọc CSV và vẽ.
+Lệnh này chạy rất nhanh (vài giây) vì chỉ đọc CSV và vẽ. Có thể chạy bất cứ
+lúc nào - kể cả khi mới có 1-2 orders trong CSV (các biểu đồ của orders
+chưa có data sẽ trống).
 
 ## Format file results.csv
 
@@ -100,7 +124,7 @@ selection-sort,Sorted,10000,..,..
 ...
 ```
 
-Tổng cộng 288 dòng (12 × 4 × 6) + 1 dòng header.
+Đầy đủ sẽ có 288 dòng (12 × 4 × 6) + 1 dòng header.
 
 ## Ghi chú
 
